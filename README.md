@@ -1,8 +1,11 @@
-## This modified version of PasteIntoFile does not prompt user for saving the file. It saves file automatically when user click it from desktop contextmenu, and shows a ballon notification when the file is saved
----
-# Paste Into File
+# Paste Into File (Silent)
 
 A Windows desktop application to paste clipboard contents (text and images) into files.
+
+**Modified from [EslaMx7/PasteIntoFile](https://github.com/EslaMx7/PasteIntoFile):**
+- Does not prompt the user when saving the file; it saves automatically
+- Shows a toast notification when the file is saved
+- Opens the saved file when the toast notification is clicked
 
 ## Installation
 
