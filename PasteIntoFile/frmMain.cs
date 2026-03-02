@@ -114,21 +114,13 @@ namespace PasteAsFile
 
         private void showNotification(string txt)
         {
+            var builder = new ToastContentBuilder();
+            builder.AddArgument("openfile", txt);
             if (Clipboard.ContainsImage())
             {
-                new ToastContentBuilder()
-                    .AddHeroImage(new Uri(txt))
-                    .AddText(this.Text)
-                    .AddText(txt)
-                    .Show();
+                builder.AddHeroImage(new Uri(txt));
             }
-            else
-            {
-                new ToastContentBuilder()
-                    .AddText(this.Text)
-                    .AddText(txt)
-                    .Show();
-            }
+            builder.AddText(this.Text).AddText(txt).Show();
         }
 
         private void btnBrowseForFolder_Click(object sender, EventArgs e)

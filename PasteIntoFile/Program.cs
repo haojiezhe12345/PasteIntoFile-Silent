@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Toolkit.Uwp.Notifications;
+using System.Threading;
 
 namespace PasteAsFile
 {
@@ -18,6 +20,50 @@ namespace PasteAsFile
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
+
+			if (ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
+            {
+				var semaphore = new SemaphoreSlim(0, 2);
+                ToastNotificationActivatedEventArgsCompat toastArgs = null;
+
+                // Listen to notification activation
+                ToastNotificationManagerCompat.OnActivated += toastArgs1 =>
+                {
+                    //Thread.Sleep(1500);
+                    toastArgs = toastArgs1;
+                    semaphore.Release();
+                };
+
+				Task.Run(() =>
+				{
+					Thread.Sleep(1000);
+                    semaphore.Release();
+                });
+
+				semaphore.Wait();
+
+				if (toastArgs != null)
+				{
+                    // Obtain the arguments from the notification
+                    ToastArguments args1 = ToastArguments.Parse(toastArgs.Argument);
+
+                    if (args1.TryGetValue("openfile", out string openfile))
+                    {
+                        //MessageBox.Show("openfile: " + openfile);
+                        var process = new Process
+                        {
+                            StartInfo = new ProcessStartInfo()
+                            {
+                                UseShellExecute = true,
+                                FileName = openfile
+                            }
+                        };
+                        process.Start();
+                        return;
+                    }
+                }
+            }
+
 			if (args.Length>0)
 			{
 				if (args[0] == "/reg")
@@ -37,10 +83,6 @@ namespace PasteAsFile
                     }
                     return;
                 }
-				else if (args[0][0] == '-')
-				{
-					return;
-				}
 				Application.Run(new frmMain(args[0]));
 			}
 			else
